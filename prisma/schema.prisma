@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          String    @default("USER")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  responsibilities RoleResponsibility[]
+}
+
+model BDD_GED {
+  id            String    @id @default(cuid())
+  filename      String
+  hash          String    @unique // For blockchain traceability
+  contentType   String
+  size          Int
+  uploadedBy    String
+  blockchainTx  String?   // Blockchain transaction hash
+  timestamp     DateTime  @default(now())
+  lastAccessed  DateTime?
+  metadata      String?   // JSON string for additional metadata
+  version       Int       @default(1)
+  status        String    @default("ACTIVE")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model RoleResponsibility {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  department    String
+  level         String    // Hierarchy level
+  startDate     DateTime
+  endDate       DateTime?
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ProcessActivity {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  type          String    // Core, Support, Management
+  owner         String
+  kpis          String?   // JSON string for KPIs
+  inputs        String    // JSON array
+  outputs       String    // JSON array
+  resources     String    // JSON array
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model PolicyEngagement {
+  id            String    @id @default(cuid())
+  title         String
+  content       String
+  type          String    // Quality, Security, Environment, etc.
+  version       String
+  approvedBy    String
+  approvalDate  DateTime
+  reviewDate    DateTime
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model RiskManagement {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  category      String
+  probability   Float
+  impact        Float
+  riskLevel     String
+  mitigations   String    // JSON array of mitigation measures
+  owner         String
+  reviewDate    DateTime
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model EnvironmentalAnalysis {
+  id            String    @id @default(cuid())
+  aspect        String
+  impact        String
+  severity      String
+  frequency     String
+  controls      String    // JSON array of control measures
+  compliance    Boolean
+  actionPlan    String?
+  responsible   String
+  deadline      DateTime?
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model DUERP {
+  id            String    @id @default(cuid())
+  workUnit      String
+  hazard        String
+  riskLevel     String
+  existingMeasures String
+  plannedMeasures String?
+  responsible   String
+  deadline      DateTime?
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Asset {
+  id            String    @id @default(cuid())
+  name          String
+  type          String
+  location      String
+  status        String
+  purchaseDate  DateTime
+  value         Float
+  depreciation  Float?
+  maintenanceSchedule String?
+  lastMaintenance DateTime?
+  nextMaintenance DateTime?
+  documents     String?   // JSON array of related document IDs
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ChemicalRisk {
+  id            String    @id @default(cuid())
+  substance     String
+  casNumber     String?   // Chemical Abstract Service number
+  hazardClass   String
+  pictograms    String    // JSON array of applicable pictograms
+  storageLocation String
+  maxQuantity   Float
+  unit          String
+  msdsLink      String?   // Material Safety Data Sheet link
+  controlMeasures String
+  emergencyProcedure String
+  responsible   String
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

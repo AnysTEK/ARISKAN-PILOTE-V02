@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "18.17.0"
+  NPM_FLAGS = "--no-optional"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
